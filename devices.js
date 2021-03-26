@@ -2234,6 +2234,8 @@ const devices = [
         vendor: 'Lonsonho',
         description: '1 gang smart dimmer switch module with neutral',
         extend: preset.light_onoff_brightness(),
+        exposes: preset.light_onoff_brightness().exposes.concat([exposes.enum('power_on_behavior', ea.ALL, ['off', 'previous', 'on'])
+            .withDescription('Controls the behaviour when the device is powered on')]),
     },
     {
         fingerprint: [{modelID: 'TS110F', manufacturerName: '_TYZB01_v8gtiaed'}],
