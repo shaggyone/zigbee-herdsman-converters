@@ -56,11 +56,16 @@ const preset = {
     },
     light_onoff_brightness: (options={}) => {
         options = {disableEffect: false, ...options};
-        const exposes = [e.light_brightness(), ...(!options.disableEffect ? [e.effect()] : [])];
+        const l_exposes = [
+            e.light_brightness(), ...(!options.disableEffect ? [e.effect()] : []),
+            exposes.enum('power_on_behavior', ea.ALL, ['off', 'previous', 'on'])
+                .withDescription('Controls the behaviour when the device is powered on')
+        ];
+
         const fromZigbee = [fz.on_off, fz.brightness, fz.level_config, fz.power_on_behavior, fz.ignore_basic_report];
         const toZigbee = [tz.light_onoff_brightness, tz.ignore_transition, tz.ignore_rate, tz.light_brightness_move,
             tz.light_brightness_step, tz.level_config, tz.power_on_behavior, ...(!options.disableEffect ? [tz.effect] : [])];
-        return {exposes, fromZigbee, toZigbee};
+        return {exposes: l_exposes, fromZigbee, toZigbee};
     },
     light_onoff_brightness_colortemp: (options={}) => {
         options = {disableEffect: false, disableColorTempStartup: false, ...options};
