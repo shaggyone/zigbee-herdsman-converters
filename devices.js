@@ -56,16 +56,11 @@ const preset = {
     },
     light_onoff_brightness: (options={}) => {
         options = {disableEffect: false, ...options};
-        const l_exposes = [
-            e.light_brightness(), ...(!options.disableEffect ? [e.effect()] : []),
-            exposes.enum('power_on_behavior', ea.ALL, ['off', 'previous', 'on'])
-                .withDescription('Controls the behaviour when the device is powered on')
-        ];
-
+        const exposes = [e.light_brightness(), ...(!options.disableEffect ? [e.effect()] : [])];
         const fromZigbee = [fz.on_off, fz.brightness, fz.level_config, fz.power_on_behavior, fz.ignore_basic_report];
         const toZigbee = [tz.light_onoff_brightness, tz.ignore_transition, tz.ignore_rate, tz.light_brightness_move,
             tz.light_brightness_step, tz.level_config, tz.power_on_behavior, ...(!options.disableEffect ? [tz.effect] : [])];
-        return {exposes: l_exposes, fromZigbee, toZigbee};
+        return {exposes, fromZigbee, toZigbee};
     },
     light_onoff_brightness_colortemp: (options={}) => {
         options = {disableEffect: false, disableColorTempStartup: false, ...options};
@@ -2233,9 +2228,12 @@ const devices = [
         model: 'QS-Zigbee-D02-TRIAC-LN',
         vendor: 'Lonsonho',
         description: '1 gang smart dimmer switch module with neutral',
+        fromZigbee: [fz.tuya_dimmer, fz.ignore_basic_report],
+        toZigbee: [tz.tuya_dimmer_state, tz.tuya_dimmer_level],
         extend: preset.light_onoff_brightness(),
-        exposes: preset.light_onoff_brightness().exposes.concat([exposes.enum('power_on_behavior', ea.ALL, ['off', 'previous', 'on'])
-            .withDescription('Controls the behaviour when the device is powered on')]),
+        exposes: [e.light_brightness().setAccess('state', ea.STATE_SET).setAccess('brightness', ea.STATE_SET)],
+        // exposes: preset.light_onoff_brightness().exposes.concat([exposes.enum('power_on_behavior', ea.ALL, ['off', 'previous', 'on'])
+        //     .withDescription('Controls the behaviour when the device is powered on')]),
     },
     {
         fingerprint: [{modelID: 'TS110F', manufacturerName: '_TYZB01_v8gtiaed'}],
